@@ -15,9 +15,9 @@ void printDir(char *name, char *flags){
 		//_exit(1);
 	}
 	
-	do{
 	errno = 0;
 	entry = readdir(dirp);
+	while(entry != NULL){
 
 
 	if(entry == NULL){
@@ -28,8 +28,10 @@ void printDir(char *name, char *flags){
 	
 	//printf("%s, %s", entry->d_type, entry->d_name);
 	//char type[256] = entry->d_name;
-	printf("%s", entry->d_name);
-	}while(entry != NULL);
+	printf("%s\n", entry->d_name);
+	errno = 0;
+	entry = readdir(dirp);
+	}
 
 }
 
@@ -51,7 +53,7 @@ int main(int argc, char* argv){
 	//if no folder location specified, list current directory
 	//TODO: implemet
 
-	printDir("/", "");
+	printDir(".", "");
 
 	return(0);
 }
