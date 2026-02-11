@@ -6,43 +6,20 @@
 #include <string.h>
 
 
-int printDir(const char *args, int numArgs){
+int printDir(int flags, const char * path){
 	DIR *dirp; 
 	struct dirent *entry;
+	//int flags = flagArg;
+  
+	printf("%d\n", flags);
+	bool listAll = flags % 10;
+	flags /= 10;
+	printf("%d\n", flags);
+	bool recursive = flags % 10;
+	flags /= 10;
+	printf("%d\n", flags);
+	bool stats = flags;
 
-	bool listAll = false;
-	bool recursive = false;
-	bool stats = false;
-
-	char* path;
-	int unusedArgs = numArgs-1;
-	printf("%d", unusedArgs);
-
-	// TODO: Fix errors. What's wrong, idk yet.
-		//			passing flags[i] to strcmp is trying to convert to int‽
-	//check flags
-	for(int i = 1; i <= numArgs; i++){
-		printf("%s\n", &args[i]);
-		if(!strcmp(&args[i], "-a")){
-			listAll = true;
-			unusedArgs--;
-		}
-		if(!strcmp(&args[i], "-R")){
-			recursive = true;
-			unusedArgs--;
-		}
-		if(!strcmp(&args[i], "-l")){
-			stats = true;
-			unusedArgs--;
-		}
-	}
-
-	if(unusedArgs){
-		path = &args[numArgs - 1];
-	}
-	else{
-		path = ".";
-	}
 	
 	printf("Flags: l: %d, a: %d, r: %d\n", stats ? 1 : 0, listAll ? 1 : 0, recursive ? 1 : 0);
 
@@ -92,13 +69,42 @@ int main(int argc, char* argv[]){
 
 	//check for folder from user
 	//if no folder location specified, list current directory
+	char* path = "./";
+	int unusedArgs = argc - 1;
+	int flags = 0;	
+
+	//check flags
 	if(argc > 1){
+		for(int i = 0; i < argc; i++){
+			printf("%s\n", argv[i]);
+			if(!strcmp(argv[i], "-a")){
+				flags += 1;
+				unusedArgs--;
+			}
+			if(!strcmp(argv[i], "-R")){
+				flags += 10;
+				unusedArgs--;
+			}
+			if(!strcmp(argv[i], "-l")){
+				flags += 100;
+				unusedArgs--;
+			}
+		}
+		printf("%d", unusedArgs);
+		if(unusedArgs){
+			path = argv[argc - 1];
+		}
+		else{
+			path = ".";
+		}
+
+
 		if(!strcmp(argv[1], "-h") || !strcmp(argv[1], "--help")){
 			printf("Usage: wls <flags> <path_to_dir>");
 			return(0);
 		}
 	}
-	res = printDir(*argv, argc);
+	res = printDir(flags, path);
 	return(res);
 }
 
